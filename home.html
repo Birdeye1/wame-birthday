@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wame</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body.transition-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(45deg, #1a1a1a, #330000);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+      color: white;
+      position: relative;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .fade-message {
+      font-size: 2.5rem;
+      text-align: center;
+      opacity: 0;
+      animation: fadeCycle 4s ease forwards;
+    }
+
+    @keyframes fadeCycle {
+      0% { opacity: 0; }
+      25% { opacity: 1; }
+      75% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .cake-stage {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+      z-index: 3;
+    }
+
+    .cake {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .layer {
+      width: 120px;
+      height: 30px;
+      margin-bottom: 5px;
+      border-radius: 10px;
+      border: 2px solid crimson;
+      background-color: #111;
+      box-shadow: 0 0 10px crimson;
+    }
+
+    .top-layer {
+      width: 80px;
+      background: linear-gradient(to right, #ffccd5, #ffb3c1);
+    }
+    .middle-layer {
+      width: 100px;
+      background: linear-gradient(to right, #ff758f, #e63946);
+    }
+    .bottom-layer {
+      width: 120px;
+      background: linear-gradient(to right, #9d0208, #6a040f);
+    }
+
+    .candle {
+      width: 8px;
+      height: 40px;
+      background-color: crimson;
+      border-radius: 4px;
+      margin-bottom: -10px;
+      position: relative;
+    }
+
+    .flame {
+      display: none;
+      position: absolute;
+      top: -20px;
+      left: -6px;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, gold, orange, red);
+      border-radius: 50%;
+      box-shadow: 0 0 20px gold;
+      animation: flicker 0.4s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(1.2); opacity: 1; }
+    }
+
+    #lightBtn {
+      margin-top: 10px;
+      padding: 10px 30px;
+      font-size: 1rem;
+      background-color: crimson;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 4;
+    }
+
+    .hb-text {
+      display: none;
+      font-size: 3rem;
+      margin-top: 30px;
+      text-align: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: url('wame-texture.jpg') center/cover;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .stars, .balloons {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      width: 2px;
+      height: 2px;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    .balloons img {
+      position: absolute;
+      width: 60px;
+      height: auto;
+      animation: floatUp 12s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-200px); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="transition-body">
+  <div class="stars" id="stars"></div>
+  <div class="balloons" id="balloons"></div>
+
+  <div id="messageContainer" class="fade-message"></div>
+
+  <div class="cake-stage" id="cakeStage">
+    <div class="cake">
+      <div class="candle" id="candle">
+        <div class="flame" id="flame"></div>
+      </div>
+      <div class="top-layer layer"></div>
+      <div class="middle-layer layer"></div>
+      <div class="bottom-layer layer"></div>
+    </div>
+    <button id="lightBtn">Light the Candle</button>
+  </div>
+
+  <div id="hbText" class="hb-text">Happy Birthday <span>Wame</span></div>
+  <audio id="bdayAudio" src="happy_birthday.mp3"></audio>
+
+  <script>
+    const body = document.body;
+    const message = document.getElementById("messageContainer");
+    const cakeStage = document.getElementById("cakeStage");
+    const flame = document.getElementById("flame");
+    const audio = document.getElementById("bdayAudio");
+    const lightBtn = document.getElementById("lightBtn");
+    const hbText = document.getElementById("hbText");
+    const starsContainer = document.getElementById("stars");
+    const balloonsContainer = document.getElementById("balloons");
+
+    const scenes = [
+      { color: "#1a1a1a", text: "Hey Wame 😊" },
+      { color: "#2a0a0a", text: "It's your special day today." },
+      { color: "#000000", text: "hope you like wat i made for you " }
+    ];
+
+    let index = 0;
+
+    function nextScene() {
+      if (index < scenes.length) {
+        message.textContent = scenes[index].text;
+        message.classList.remove("fade-message");
+        void message.offsetWidth;
+        message.classList.add("fade-message");
+        index++;
+        setTimeout(nextScene, 4200);
+      } else {
+        message.style.display = 'none';
+        cakeStage.style.display = 'flex';
+      }
+    }
+    audio.addEventListener("ended", () => {
+      // Automatically redirect to the next page when the song ends
+      window.location.href = "gift.html";
+    });
+    lightBtn.addEventListener("click", () => {
+      flame.style.display = "block";
+      audio.play();
+      hbText.style.display = "block";
+    });
+
+    for (let i = 0; i < 120; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.animationDelay = `${Math.random() * 2}s`;
+      starsContainer.appendChild(star);
+    }
+
+    const balloonImages = [
+      'balloon1.png',
+      'balloon2.png',
+      'balloon3.png'
+    ];
+
+    for (let i = 0; i < 15; i++) {
+      const img = document.createElement("img");
+      img.src = balloonImages[i % balloonImages.length];
+      img.style.left = `${Math.random() * 100}%`;
+      img.style.top = `${100 + Math.random() * 20}px`;
+      img.style.animationDelay = `${Math.random() * 10}s`;
+      balloonsContainer.appendChild(img);
+    }
+
+    window.onload = nextScene;
+  </script>
+</body>
+</html>

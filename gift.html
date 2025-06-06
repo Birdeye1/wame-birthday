@@ -133,7 +133,7 @@
 <body>
   <h1>Here's your gift... for now 😂</h1>
 
-  <img src="assets/vogue_wame_cover.jpg" class="gift-image" id="giftImage" alt="Gift Vogue Cover" />
+  <img src="vogue_wame_cover.jpg" class="gift-image" id="giftImage" alt="Gift Vogue Cover" />
 
   <button class="download-btn" id="downloadBtn">Download Your Vogue Cover</button>
 
@@ -152,7 +152,7 @@
       downloadBtn.style.opacity = 0.5;
 
       try {
-        const response = await fetch("assets/vogue_wame_cover.jpg");
+        const response = await fetch("vogue_wame_cover.jpg");
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
