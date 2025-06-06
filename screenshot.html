@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One More Thing...</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(45deg, #000000, #1a1a1a);
+      background-size: 400% 400%;
+      animation: bgFlow 16s ease infinite;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    @keyframes bgFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: crimson;
+      animation: pulse 2s infinite;
+    }
+
+    .screenshot {
+      width: 90%;
+      max-width: 350px;
+      border-radius: 20px;
+      margin-top: 30px;
+      border: 2px solid crimson;
+      box-shadow: 0 0 20px crimson;
+      animation: fadeIn 2s ease forwards, glowPulse 3s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0% { text-shadow: 0 0 10px crimson; }
+      50% { text-shadow: 0 0 20px red; }
+      100% { text-shadow: 0 0 10px crimson; }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 10px crimson; border-color: crimson; }
+      50% { box-shadow: 0 0 20px red; border-color: red; }
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>U owe 8hrs of sleep🥱 </h1>
+  <img src="screenshot.png" alt="8 hour call screenshot" class="screenshot" onload="this.style.opacity = 1" />
+</body>
+</html>
